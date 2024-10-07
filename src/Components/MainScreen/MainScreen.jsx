@@ -8,9 +8,9 @@ const MainScreen = ({ title, children }) => {
       {title && (
         <Container className="my-5">
           <Row className="my-4">
-            <h1 className="heading">WelCome Back Shubham...</h1>
+            <h1 className="heading">{title}</h1>
           </Row>
-            <hr className="w-full"/>
+          <hr className="w-full" />
           {children}
         </Container>
       )}

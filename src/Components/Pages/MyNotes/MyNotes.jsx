@@ -1,5 +1,6 @@
+/* eslint-disable no-unused-vars */
 import { Link } from "react-router-dom/cjs/react-router-dom.min";
-import MainScreen from "../../../MainScreen/MainScreen";
+import MainScreen from "../../MainScreen/MainScreen";
 import {
   Accordion,
   Badge,
@@ -8,13 +9,23 @@ import {
   CardBody,
   CardHeader,
 } from "react-bootstrap";
-import { notes } from "../../../../data/notes";
+
+import { useEffect, useState } from "react";
+import axios from "axios";
 
 const MyNotes = () => {
+  const [notes, setNotes] = useState([]);
 
-  const handleDeleteNote =()=>{
-    
-  }
+  const fetchNotes = async () => {
+    const { data } = await axios.get("http://localhost:8081/api/notes");
+    setNotes(data);
+    console.log(notes);
+  };
+  useEffect(() => {
+    fetchNotes();
+  }, []);
+
+  const handleDeleteNote = () => {};
   return (
     <div className="mainContainer">
       <MainScreen title={"Shubham"}>
@@ -28,7 +39,7 @@ const MyNotes = () => {
         <div className="my-4">
           {notes.map((note) => (
             <>
-              <Accordion>
+              <Accordion key={note._id}>
                 <Accordion.Item eventKey="0">
                   <Card className="my-3">
                     <CardHeader className="d-flex justify-content-between">
@@ -37,10 +48,18 @@ const MyNotes = () => {
                       </Accordion.Header>
 
                       <div className="">
-                        <Button variant="success" className="px-2 mx-2" href={`/note/${note._id}`}>
+                        <Button
+                          variant="success"
+                          className="px-2 mx-2"
+                          href={`/note/${note._id}`}
+                        >
                           Edit
                         </Button>
-                        <Button variant="danger" className="px-2 mx-2" onClick={handleDeleteNote}>
+                        <Button
+                          variant="danger"
+                          className="px-2 mx-2"
+                          onClick={handleDeleteNote}
+                        >
                           Delete
                         </Button>
                       </div>

@@ -3,9 +3,23 @@ import Container from "react-bootstrap/Container";
 import Nav from "react-bootstrap/Nav";
 import Navbar from "react-bootstrap/Navbar";
 import NavDropdown from "react-bootstrap/NavDropdown";
-import { Link } from "react-router-dom/cjs/react-router-dom.min";
+import { useDispatch, useSelector } from "react-redux";
+import { Link, useHistory } from "react-router-dom/cjs/react-router-dom.min";
+import { logout } from "../../actions/userAction";
 
 const Header = () => {
+  const dispatch = useDispatch();
+  const userLogin = useSelector((state) => state.userLogin);
+  const { userInfo } = userLogin;
+  const history = useHistory();
+
+  const handleLogout = () => {
+    if (userInfo) {
+      dispatch(logout());
+      history.push("/");
+    }
+  };
+
   return (
     <>
       <Navbar
@@ -35,10 +49,8 @@ const Header = () => {
               </Nav>
             </Nav>
             <Nav>
-              <Nav.Link  className="text-white text-md">
-                <Link to="mynotes">
-                 My Notes
-                </Link>
+              <Nav.Link className="text-white text-md">
+                <Link to="mynotes">My Notes</Link>
               </Nav.Link>
               <NavDropdown
                 title="Profile"
@@ -48,7 +60,7 @@ const Header = () => {
                 <NavDropdown.Item href="/" className="text-sm">
                   MY Profile
                 </NavDropdown.Item>
-                <NavDropdown.Item href="/" className="text-sm">
+                <NavDropdown.Item className="text-sm" onClick={handleLogout}>
                   Logout
                 </NavDropdown.Item>
               </NavDropdown>

@@ -1,5 +1,5 @@
 /* eslint-disable no-unused-vars */
-import { Link } from "react-router-dom/cjs/react-router-dom.min";
+import { Link, useHistory } from "react-router-dom/cjs/react-router-dom.min";
 import MainScreen from "../../MainScreen/MainScreen";
 import {
   Accordion,
@@ -12,23 +12,38 @@ import {
 
 import { useEffect, useState } from "react";
 import axios from "axios";
+import { useDispatch, useSelector } from "react-redux";
+import { getNotes } from "../../../actions/notesAction";
+import Loading from "../../Loading/Loading";
+import ErrorScreen from "../../ErrorScreen/ErrorScreen";
 
 const MyNotes = () => {
-  const [notes, setNotes] = useState([]);
+  const dispatch = useDispatch();
+  const notesList = useSelector((state) => state.notesList);
+  const notesLIst = notesList.notes;
+  const history = useHistory();
+  const { loading, error, notes } = notesList;
 
-  const fetchNotes = async () => {
-    const { data } = await axios.get("http://localhost:8081/api/notes");
-    setNotes(data);
-    console.log(notes);
-  };
+  const userLogin = useSelector((state) => state.userLogin);
+  const { userInfo } = userLogin;
+
+  const notesCreate = useSelector((state) => state.notesCreate);
+  const { success: successCreate } = notesCreate;
+
+  console.log(notesList);
   useEffect(() => {
-    fetchNotes();
-  }, []);
+    // fetchNotes();
+
+    dispatch(getNotes());
+    if (!userInfo) {
+      history.push("/");
+    }
+  }, [dispatch, history, successCreate, userInfo]);
 
   const handleDeleteNote = () => {};
   return (
     <div className="mainContainer">
-      <MainScreen title={"Shubham"}>
+      <MainScreen title={`Welcome ${userInfo.name}`}>
         <Link to="createnote">
           <Button variant="info" size="lg">
             {" "}
@@ -36,8 +51,13 @@ const MyNotes = () => {
           </Button>
         </Link>
 
+        {loading && <Loading></Loading>}
+        {error && (
+          <ErrorScreen variant="danger">{"Error to get Notes!"}</ErrorScreen>
+        )}
+
         <div className="my-4">
-          {notes.map((note) => (
+          {notesLIst?.reverse().map((note) => (
             <>
               <Accordion key={note._id}>
                 <Accordion.Item eventKey="0">
@@ -76,8 +96,10 @@ const MyNotes = () => {
                         <blockquote className="blockquote mb-0">
                           <p>{note.content}</p>
                           <footer className="blockquote-footer">
-                            Someone famous in{" "}
-                            <cite title="Source Title">Source Title</cite>
+                            created On :
+                            <cite title="Source Title">
+                              {note.createdAt.substring(0, 10)}
+                            </cite>
                           </footer>
                         </blockquote>
                       </CardBody>

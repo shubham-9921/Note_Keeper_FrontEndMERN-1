@@ -71,7 +71,7 @@ const MyNotes = () => {
                         <Button
                           variant="success"
                           className="px-2 mx-2"
-                          href={`/note/${note._id}`}
+                          href={`/updatenote/${note._id}`}
                         >
                           Edit
                         </Button>
